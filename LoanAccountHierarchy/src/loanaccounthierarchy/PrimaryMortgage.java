@@ -9,8 +9,8 @@ package loanaccounthierarchy;
  * @author kinner
  */
 public class PrimaryMortgage extends LoanAccount{
-    double PMIMonthlyAmount;
-    Address address;
+    private double PMIMonthlyAmount;
+    private Address address;
 
     public PrimaryMortgage(double principle, double annualInterestRate, int months, double PMIMonthlyAmount, Address address) {
         super(principle, annualInterestRate, months);

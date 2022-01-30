@@ -9,10 +9,10 @@ package loanaccounthierarchy;
  * @author kinner
  */
 public class Address {
-    String street;
-    String city;
-    String state;
-    String zipcode;
+    private String street;
+    private String city;
+    private String state;
+    private String zipcode;
 
     public Address(String street, String city, String state, String zipcode) {
         this.street = street;

@@ -9,7 +9,7 @@ package loanaccounthierarchy;
  * @author kinner
  */
 public class CarLoan extends LoanAccount {
-    String vehicleVIN;
+    private String vehicleVIN;
 
     public CarLoan(double principle, double annualInterestRate, int months, String vehicleVIN) {
         super(principle, annualInterestRate, months);
