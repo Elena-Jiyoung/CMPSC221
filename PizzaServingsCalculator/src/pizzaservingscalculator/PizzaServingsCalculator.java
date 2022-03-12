@@ -16,7 +16,6 @@ public class PizzaServingsCalculator extends JFrame{
 
     private JLabel jLabel1 = new JLabel();
     private JLabel jLabel2 = new JLabel();
-    //private JLabel jLabel3 = new JLabel();
     private JTextField input = new JTextField(5);
     private JButton calcButton = new JButton("Calculate Servings");
     static JLabel jLabel4 = new JLabel();
@@ -24,8 +23,6 @@ public class PizzaServingsCalculator extends JFrame{
     private JPanel line1 = new JPanel();
     private JPanel line2 = new JPanel();
     private JPanel line4 = new JPanel();
-
-    
 
     public PizzaServingsCalculator()
     {
@@ -45,7 +42,7 @@ public class PizzaServingsCalculator extends JFrame{
 
         add(line1);
         add(line2);
-        add(calcButton);
+        add(calcButton); // Entire line is button
         add(line4);
 
         ButtonHandler t = new ButtonHandler();
@@ -69,7 +66,6 @@ public class PizzaServingsCalculator extends JFrame{
         {
             Double t = Math.pow((Double.parseDouble(input.getText()) / 8), 2);
             jLabel4.setText("A " + input.getText() + " inch pizza will serve " + Math.round(t * 100.0) / 100.0 + " people.");
-            //JOptionPane.showMessageDialog(PizzaServingsCalculator.this, String.format("Button pressed"), event.getActionCommand());
         }
     }
 }
