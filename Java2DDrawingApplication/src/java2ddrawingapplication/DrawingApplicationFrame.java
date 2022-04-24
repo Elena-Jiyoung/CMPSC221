@@ -53,7 +53,7 @@ public class DrawingApplicationFrame extends JFrame
 
     // create the widgets for the firstLine Panel.
     JLabel shapeLabel = new JLabel("Shape: ");
-    JComboBox shapeComboBox = new JComboBox<>(new String[]{"Line", "Oval", "Rectangle"});
+    JComboBox shapeComboBox = new JComboBox<>(new String[]{"Line", "Oval" , "Rectangle"});
 
     JButton color1Button = new JButton("1st Color...");
     JButton color2Button = new JButton("2nd Color...");
@@ -201,7 +201,6 @@ public class DrawingApplicationFrame extends JFrame
             tempShapes.clear();
         }
 
-
         private class MouseHandler extends MouseAdapter implements MouseMotionListener
         {
 
@@ -238,6 +237,5 @@ public class DrawingApplicationFrame extends JFrame
                 statusLabel.setText("(" + event.getX() + "," + event.getY() + ")");
             }
         }
-
     }
 }
