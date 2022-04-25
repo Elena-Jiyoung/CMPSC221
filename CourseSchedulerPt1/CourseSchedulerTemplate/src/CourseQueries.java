@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class CourseQueries {
     private static Connection connection;
-    private static ArrayList<String> faculty = new ArrayList<String>();
+    
     private static PreparedStatement addCourse;
     private static PreparedStatement getCourseList;
     private static ResultSet resultSet;
@@ -25,12 +25,13 @@ public class CourseQueries {
         ArrayList<CourseEntry> courses = new ArrayList<CourseEntry>();
         try
         {
-            getCourseList = connection.prepareStatement("select semester from app.course order by semester");
+            getCourseList = connection.prepareStatement("select semester, coursecode, description, seats from app.course where semester = ?");
+            getCourseList.setString(1, semester);
             resultSet = getCourseList.executeQuery();
             
             while(resultSet.next())
             {
-                
+                courses.add(new CourseEntry(resultSet.getString(1), resultSet.getString(2), resultSet.getString(3), resultSet.getInt(4)));
             }
         }
         catch(SQLException sqlException)
@@ -59,5 +60,48 @@ public class CourseQueries {
         }
     }
 
+    public static ArrayList<String> getAllCourseCodes(String semester)
+    {
+        connection = DBConnection.getConnection();
+        ArrayList<String> courseCodes = new ArrayList<String>();
+        try
+        {
+            getCourseList = connection.prepareStatement("select coursecode from app.course where semester = ?");
+            getCourseList.setString(1, semester);
+            resultSet = getCourseList.executeQuery();
+            
+            while(resultSet.next())
+            {
+                courseCodes.add(resultSet.getString(1));
+            }
+        }
+        catch(SQLException sqlException)
+        {
+            sqlException.printStackTrace();
+        }
+        return courseCodes;
+    }
 
+    public static int getCourseSeats(String semester, String courseCode)
+    {
+        connection = DBConnection.getConnection();
+        int count = 0;
+        try
+        {
+            getCourseList = connection.prepareStatement("select seats from app.course where semester = ? and coursecode = ?");
+            getCourseList.setString(1, semester);
+            getCourseList.setString(2, courseCode);
+            resultSet = getCourseList.executeQuery();
+            
+            while(resultSet.next())
+            {
+                count++;
+            }
+        }
+        catch(SQLException sqlException)
+        {
+            sqlException.printStackTrace();
+        }
+        return count;
+    }
 }
