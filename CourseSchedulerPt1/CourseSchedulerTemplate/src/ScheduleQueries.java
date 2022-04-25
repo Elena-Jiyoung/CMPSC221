@@ -44,7 +44,8 @@ public class ScheduleQueries {
         connection = DBConnection.getConnection();
         try
         {
-            getScheduleByStudent = connection.prepareStatement("select semester, studentid, coursecode, status, timestamp from app.schedule");
+            getScheduleByStudent = connection.prepareStatement("select semester, coursecode, studentid, status, timestamp from app.schedule where studentid = ?");
+            getScheduleByStudent.setString(1, studentID);
             resultSet = getScheduleByStudent.executeQuery();
             
             while(resultSet.next())

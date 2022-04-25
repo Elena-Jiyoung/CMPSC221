@@ -1,5 +1,7 @@
-
 import java.util.ArrayList;
+
+import javax.swing.table.DefaultTableModel;
+
 import java.sql.Time;
 import java.sql.Timestamp;
 /*
@@ -23,6 +25,8 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame() {
         initComponents();
         rebuildSemesterComboBoxes();
+        rebuildCourseComboBoxes();
+        rebuildStudentComboBoxes();
     }
     
     public void rebuildSemesterComboBoxes()
@@ -55,6 +59,7 @@ public class MainFrame extends javax.swing.JFrame {
         for (StudentEntry student : students)
         {
             nameArr[i] = student.getLastName() + ", " + student.getFirstName();
+            i++;
         }
 
         selectStudentSchedule.setModel(new javax.swing.DefaultComboBoxModel(nameArr));
@@ -361,11 +366,6 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel11.setText("Select Student:");
 
         selectCourseComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        selectCourseComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selectCourseComboBoxActionPerformed(evt);
-            }
-        });
 
         selectStudentSchedule.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -435,6 +435,11 @@ public class MainFrame extends javax.swing.JFrame {
         jScrollPane2.setViewportView(displayScheduleTable);
 
         displayScheduleButton.setLabel("Display");
+        displayScheduleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                displayScheduleButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -496,11 +501,6 @@ public class MainFrame extends javax.swing.JFrame {
         currentSemesterLabel.setText("           ");
 
         currentSemesterComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        currentSemesterComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                currentSemesterComboBoxActionPerformed(evt);
-            }
-        });
 
         changeSemesterButton.setText("Change Semester");
         changeSemesterButton.addActionListener(new java.awt.event.ActionListener() {
@@ -552,30 +552,48 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void addSemesterSubmitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSemesterSubmitButtonActionPerformed
         String semester = addSemesterTextfield.getText();
-        SemesterQueries.addSemester(semester);
-        addSemesterStatusLabel.setText("Semester " + semester + " has been added.");
-        rebuildSemesterComboBoxes();
+        if (semester.length() > 0) {
+            SemesterQueries.addSemester(semester);
+            addSemesterStatusLabel.setText("Semester " + semester + " has been added.");
+            rebuildSemesterComboBoxes();
+        }
     }//GEN-LAST:event_addSemesterSubmitButtonActionPerformed
 
     private void addCourseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCourseButtonActionPerformed
         // TODO add your handling code here:
-        CourseEntry newCourseEntry = new CourseEntry(currentSemester, courseCodeEntry.getText(), courseDescEntry.getText(), (int)seatsEntry.getValue());
-        CourseQueries.addCourse(newCourseEntry);
-        addCourseOutput.setText(courseCodeEntry.getText() + " has been added.");
-        rebuildCourseComboBoxes();
+        if (courseCodeEntry.getText().length() > 0 && courseDescEntry.getText().length() > 0) {
+            CourseEntry newCourseEntry = new CourseEntry(currentSemester, courseCodeEntry.getText(), courseDescEntry.getText(), (int)seatsEntry.getValue());
+            CourseQueries.addCourse(newCourseEntry);
+            addCourseOutput.setText(courseCodeEntry.getText() + " has been added.");
+            rebuildCourseComboBoxes();
+        }
     }//GEN-LAST:event_addCourseButtonActionPerformed
 
     private void addStudentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addStudentButtonActionPerformed
         // TODO add your handling code here:
-        StudentEntry newStudent = new StudentEntry(studentIDEntry.getText(), firstNameEntry.getText(), lastNameEntry.getText());
-        StudentQueries.addStudent(newStudent);
-        addStudentOutput.setText(lastNameEntry.getText() + ", " + firstNameEntry.getText() + " has been added");
-        rebuildStudentComboBoxes();
+        if (studentIDEntry.getText().length() > 0 && firstNameEntry.getText().length() > 0 && lastNameEntry.getText().length() > 0) {
+            StudentEntry newStudent = new StudentEntry(studentIDEntry.getText(), firstNameEntry.getText(), lastNameEntry.getText());
+            StudentQueries.addStudent(newStudent);
+            addStudentOutput.setText(lastNameEntry.getText() + ", " + firstNameEntry.getText() + " has been added");
+            rebuildStudentComboBoxes();
+        }
         
     }//GEN-LAST:event_addStudentButtonActionPerformed
 
     private void displayCoursesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayCoursesButtonActionPerformed
         // TODO add your handling code here:
+        ArrayList<CourseEntry> courses = CourseQueries.getAllCourses(currentSemester);
+        DefaultTableModel currTableMod = (DefaultTableModel)coursesTable.getModel();
+        currTableMod.setNumRows(0);
+        Object[] rowData = new Object[3];
+        for (CourseEntry c : courses)
+        {
+            rowData[0] = c.getCourseCode();
+            rowData[1] = c.getCourseDescription();
+            rowData[2] = c.getSeats();
+            currTableMod.addRow(rowData);
+        }
+        
     }//GEN-LAST:event_displayCoursesButtonActionPerformed
 
     private void changeSemesterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeSemesterButtonActionPerformed
@@ -589,15 +607,31 @@ public class MainFrame extends javax.swing.JFrame {
         if (CourseQueries.getCourseSeats(currentSemester, (String)selectCourseComboBox.getSelectedItem()) > ScheduleQueries.getScheduledStudentCount(currentSemester, (String)selectCourseComboBox.getSelectedItem()))
         {
             status = "s";
+            scheduleCourseOutput.setText((String)selectStudentSchedule.getSelectedItem() + " has been scheduled for " + (String)selectCourseComboBox.getSelectedItem());
         }
         else
         {
             status = "w";
+            scheduleCourseOutput.setText((String)selectStudentSchedule.getSelectedItem() + " has been waitlisted for " + (String)selectCourseComboBox.getSelectedItem());
         }
         ScheduleEntry newEntry = new ScheduleEntry(currentSemester, (String)selectCourseComboBox.getSelectedItem(), (String)selectStudentSchedule.getSelectedItem(), status, new java.sql.Timestamp(System.currentTimeMillis()));
         ScheduleQueries.addScheduleEntry(newEntry);
-            
     }//GEN-LAST:event_scheduleCoursesButtonActionPerformed
+
+    private void displayScheduleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayScheduleButtonActionPerformed
+        // TODO add your handling code here:
+        ArrayList<ScheduleEntry> schedule = ScheduleQueries.getScheduleByStudent(currentSemester, (String)selectStudentDisplay.getSelectedItem());
+        DefaultTableModel currTableMod = (DefaultTableModel)displayScheduleTable.getModel();
+        currTableMod.setNumRows(0);
+        Object[] rowData = new Object[3];
+        for (ScheduleEntry s : schedule)
+        {
+            rowData[0] = s.getCourseCode();
+            rowData[1] = s.getStatus().equals("w") ? "Waitlisted" : "Scheduled";
+            currTableMod.addRow(rowData);
+        }
+
+    }//GEN-LAST:event_displayScheduleButtonActionPerformed
 
     /**
      * @param args the command line arguments
