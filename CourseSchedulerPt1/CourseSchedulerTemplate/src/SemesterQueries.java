@@ -27,7 +27,7 @@ public class SemesterQueries {
         connection = DBConnection.getConnection();
         try
         {
-            addSemester = connection.prepareStatement("insert into app.semester (semester) values (?)");
+            addSemester = connection.prepareStatement("insert into app.semester (name) values (?)");
             addSemester.setString(1, name);
             addSemester.executeUpdate();
         }
@@ -44,7 +44,7 @@ public class SemesterQueries {
         ArrayList<String> semester = new ArrayList<String>();
         try
         {
-            getSemesterList = connection.prepareStatement("select semester from app.semester order by semester");
+            getSemesterList = connection.prepareStatement("select name from app.semester order by name");
             resultSet = getSemesterList.executeQuery();
             
             while(resultSet.next())
