@@ -602,7 +602,8 @@ public class MainFrame extends javax.swing.JFrame {
     private void scheduleCoursesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scheduleCoursesButtonActionPerformed
         // TODO add your handling code here:
         String status = "";
-        if (CourseQueries.getCourseSeats(currentSemester, (String)selectCourseComboBox.getSelectedItem()) >= ScheduleQueries.getScheduledStudentCount(currentSemester, (String)selectCourseComboBox.getSelectedItem()))
+        int x = CourseQueries.getCourseSeats(currentSemester, (String)selectCourseComboBox.getSelectedItem());
+        if (CourseQueries.getCourseSeats(currentSemester, (String)selectCourseComboBox.getSelectedItem()) > ScheduleQueries.getScheduledStudentCount(currentSemester, (String)selectCourseComboBox.getSelectedItem()))
         {
             status = "s";
             scheduleCourseOutput.setText((String)selectStudentSchedule.getSelectedItem() + " has been scheduled for " + (String)selectCourseComboBox.getSelectedItem());

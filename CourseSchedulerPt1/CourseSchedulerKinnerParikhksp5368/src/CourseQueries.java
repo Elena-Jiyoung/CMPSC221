@@ -94,9 +94,7 @@ public class CourseQueries {
             resultSet = getCourseList.executeQuery();
             
             while(resultSet.next())
-            {
-                count++;
-            }
+                count = resultSet.getInt(1);
         }
         catch(SQLException sqlException)
         {
