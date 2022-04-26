@@ -193,8 +193,6 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        addCourseOutput.setText("PLACEHOLDER");
-
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -235,7 +233,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(addCourseButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(addCourseOutput)
-                .addContainerGap(69, Short.MAX_VALUE))
+                .addContainerGap(85, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Add Course", jPanel4);
@@ -252,8 +250,6 @@ public class MainFrame extends javax.swing.JFrame {
                 addStudentButtonActionPerformed(evt);
             }
         });
-
-        addStudentOutput.setText("PLACEHOLDER");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -295,7 +291,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(addStudentButton)
                 .addGap(18, 18, 18)
                 .addComponent(addStudentOutput)
-                .addContainerGap(50, Short.MAX_VALUE))
+                .addContainerGap(66, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Add Student", jPanel5);
@@ -375,8 +371,6 @@ public class MainFrame extends javax.swing.JFrame {
                 scheduleCoursesButtonActionPerformed(evt);
             }
         });
-
-        scheduleCourseOutput.setText("PLACEHOLDER");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -566,6 +560,7 @@ public class MainFrame extends javax.swing.JFrame {
             CourseQueries.addCourse(newCourseEntry);
             addCourseOutput.setText(courseCodeEntry.getText() + " has been added.");
             rebuildCourseComboBoxes();
+            displayCoursesButtonActionPerformed(null);
         }
     }//GEN-LAST:event_addCourseButtonActionPerformed
 
@@ -580,6 +575,7 @@ public class MainFrame extends javax.swing.JFrame {
         
     }//GEN-LAST:event_addStudentButtonActionPerformed
 
+    // STUDENT-DISPLAY_COURSES TABLE
     private void displayCoursesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayCoursesButtonActionPerformed
         // TODO add your handling code here:
         ArrayList<CourseEntry> courses = CourseQueries.getAllCourses(currentSemester);
@@ -593,18 +589,20 @@ public class MainFrame extends javax.swing.JFrame {
             rowData[2] = c.getSeats();
             currTableMod.addRow(rowData);
         }
-        
     }//GEN-LAST:event_displayCoursesButtonActionPerformed
 
     private void changeSemesterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeSemesterButtonActionPerformed
         currentSemester = (String)currentSemesterComboBox.getSelectedItem();
         currentSemesterLabel.setText(currentSemester);
+        rebuildCourseComboBoxes();
+        displayCoursesButtonActionPerformed(null);
+        displayScheduleButtonActionPerformed(null);
     }//GEN-LAST:event_changeSemesterButtonActionPerformed
 
     private void scheduleCoursesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scheduleCoursesButtonActionPerformed
         // TODO add your handling code here:
         String status = "";
-        if (CourseQueries.getCourseSeats(currentSemester, (String)selectCourseComboBox.getSelectedItem()) > ScheduleQueries.getScheduledStudentCount(currentSemester, (String)selectCourseComboBox.getSelectedItem()))
+        if (CourseQueries.getCourseSeats(currentSemester, (String)selectCourseComboBox.getSelectedItem()) >= ScheduleQueries.getScheduledStudentCount(currentSemester, (String)selectCourseComboBox.getSelectedItem()))
         {
             status = "s";
             scheduleCourseOutput.setText((String)selectStudentSchedule.getSelectedItem() + " has been scheduled for " + (String)selectCourseComboBox.getSelectedItem());
@@ -618,6 +616,8 @@ public class MainFrame extends javax.swing.JFrame {
         ScheduleQueries.addScheduleEntry(newEntry);
     }//GEN-LAST:event_scheduleCoursesButtonActionPerformed
 
+
+    // STUDENT-DISPLAY_SCHEDULE TABLE
     private void displayScheduleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayScheduleButtonActionPerformed
         // TODO add your handling code here:
         ArrayList<ScheduleEntry> schedule = ScheduleQueries.getScheduleByStudent(currentSemester, (String)selectStudentDisplay.getSelectedItem());

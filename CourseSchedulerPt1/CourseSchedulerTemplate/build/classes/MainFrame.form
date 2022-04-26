@@ -246,7 +246,7 @@
                               <Component id="addCourseButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="addCourseOutput" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="69" max="32767" attributes="0"/>
+                              <EmptySpace pref="85" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -282,9 +282,6 @@
                       </Events>
                     </Component>
                     <Component class="javax.swing.JLabel" name="addCourseOutput">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="PLACEHOLDER"/>
-                      </Properties>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -345,7 +342,7 @@
                               <Component id="addStudentButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="addStudentOutput" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="50" max="32767" attributes="0"/>
+                              <EmptySpace pref="66" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -381,9 +378,6 @@
                       </Events>
                     </Component>
                     <Component class="javax.swing.JLabel" name="addStudentOutput">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="PLACEHOLDER"/>
-                      </Properties>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -624,9 +618,6 @@
                       </Events>
                     </Component>
                     <Component class="javax.swing.JLabel" name="scheduleCourseOutput">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="PLACEHOLDER"/>
-                      </Properties>
                     </Component>
                   </SubComponents>
                 </Container>
