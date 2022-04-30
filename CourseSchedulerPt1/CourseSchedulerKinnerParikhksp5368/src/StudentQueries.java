@@ -60,9 +60,7 @@ public class StudentQueries {
         return faculty;
     }
 
-
-    /*
-    public static ArrayList<StudentEntry> getStudent(String studentID)
+    public static StudentEntry getStudent(String studentID)
     {
         connection = DBConnection.getConnection();
         try
@@ -71,19 +69,27 @@ public class StudentQueries {
             getAllStudents.setString(1, studentID);
             resultSet = getAllStudents.executeQuery();
             
-            ArrayList<StudentEntry> faculty = new ArrayList<StudentEntry>();
-            while(resultSet.next())
-            {
-                StudentEntry newEntry = new StudentEntry(resultSet.getString(1), resultSet.getString(2), resultSet.getString(3));
-                faculty.add(newEntry);
-            }
-
-            return faculty;
+            return new StudentEntry(resultSet.getString(1), resultSet.getString(2), resultSet.getString(3));
         }
         catch(SQLException sqlException)
         {
             sqlException.printStackTrace();
             return null;
         }
-    }*/
+    }
+
+    public static void dropStudent(String studentID)
+    {
+        connection = DBConnection.getConnection();
+        try
+        {
+            getAllStudents = connection.prepareStatement("delete from app.student where studentid = ?");
+            getAllStudents.setString(1, studentID);
+            resultSet = getAllStudents.executeQuery();
+        }
+        catch(SQLException sqlException)
+        {
+            sqlException.printStackTrace();
+        }
+    }
 }
