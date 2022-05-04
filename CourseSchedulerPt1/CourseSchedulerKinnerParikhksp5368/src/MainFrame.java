@@ -919,6 +919,7 @@ public class MainFrame extends javax.swing.JFrame {
         String scheduledStudents = "Scheduled students dropped from the course:\n";
         String waitlistedStudents = "Waitlisted students dropped from the course:\n";
         StudentEntry currStudent;
+        ArrayList<ScheduleEntry> x = ScheduleQueries.getScheduledStudentsByCourse(currentSemester, (String)dropCoursesComboBox.getSelectedItem());
         for (ScheduleEntry currentEntry : ScheduleQueries.getScheduledStudentsByCourse(currentSemester, (String)dropCoursesComboBox.getSelectedItem()))
         {
             currStudent = StudentQueries.getStudent(currentEntry.getStudentID());
@@ -927,7 +928,7 @@ public class MainFrame extends javax.swing.JFrame {
         for (ScheduleEntry currentEntry : ScheduleQueries.getWaitlistedStudentsByCourse(currentSemester, (String)dropCoursesComboBox.getSelectedItem()))
         {
             currStudent = StudentQueries.getStudent(currentEntry.getStudentID());
-            scheduledStudents += currStudent.getLastName() + ", " + currStudent.getFirstName() + " " + currStudent.getStudentID() + "\n"; 
+            waitlistedStudents += currStudent.getLastName() + ", " + currStudent.getFirstName() + " " + currStudent.getStudentID() + "\n"; 
         }
 
         ScheduleQueries.dropScheduleByCourse(currentSemester, (String)dropCoursesComboBox.getSelectedItem());
