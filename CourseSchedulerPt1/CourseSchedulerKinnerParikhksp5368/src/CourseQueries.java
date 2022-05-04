@@ -111,7 +111,7 @@ public class CourseQueries {
             getCourseList = connection.prepareStatement("delete from app.course where semester = ? and coursecode = ?");
             getCourseList.setString(1, semester);
             getCourseList.setString(2, courseCode);
-            resultSet = getCourseList.executeQuery();
+            getCourseList.executeUpdate();
         }
         catch(SQLException sqlException)
         {

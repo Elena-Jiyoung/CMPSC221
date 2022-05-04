@@ -69,6 +69,7 @@ public class StudentQueries {
             getAllStudents.setString(1, studentID);
             resultSet = getAllStudents.executeQuery();
             
+            resultSet.next();
             return new StudentEntry(resultSet.getString(1), resultSet.getString(2), resultSet.getString(3));
         }
         catch(SQLException sqlException)
@@ -85,7 +86,7 @@ public class StudentQueries {
         {
             getAllStudents = connection.prepareStatement("delete from app.student where studentid = ?");
             getAllStudents.setString(1, studentID);
-            resultSet = getAllStudents.executeQuery();
+            getAllStudents.executeUpdate();
         }
         catch(SQLException sqlException)
         {

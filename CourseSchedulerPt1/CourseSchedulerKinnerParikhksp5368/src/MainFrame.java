@@ -59,7 +59,7 @@ public class MainFrame extends javax.swing.JFrame {
         int i = 0;
         for (StudentEntry student : students)
         {
-            nameArr[i] = student.getLastName() + ", " + student.getFirstName();
+            nameArr[i] = student.getLastName() + ", " + student.getFirstName() + " " + student.getStudentID();
             i++;
         }
 
@@ -560,11 +560,6 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel11.setText("Select Student:");
 
         selectCourseComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        selectCourseComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selectCourseComboBoxActionPerformed(evt);
-            }
-        });
 
         selectStudentSchedule.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -711,11 +706,6 @@ public class MainFrame extends javax.swing.JFrame {
         currentSemesterLabel.setText("           ");
 
         currentSemesterComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        currentSemesterComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                currentSemesterComboBoxActionPerformed(evt);
-            }
-        });
 
         changeSemesterButton.setText("Change Semester");
         changeSemesterButton.addActionListener(new java.awt.event.ActionListener() {
@@ -822,18 +812,18 @@ public class MainFrame extends javax.swing.JFrame {
     private void scheduleCoursesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scheduleCoursesButtonActionPerformed
         // TODO add your handling code here:
         String status = "";
-        int x = CourseQueries.getCourseSeats(currentSemester, (String)selectCourseComboBox.getSelectedItem());
+        //int x = CourseQueries.getCourseSeats(currentSemester,  (String)selectCourseComboBox.getSelectedItem());
         if (CourseQueries.getCourseSeats(currentSemester, (String)selectCourseComboBox.getSelectedItem()) > ScheduleQueries.getScheduledStudentCount(currentSemester, (String)selectCourseComboBox.getSelectedItem()))
         {
             status = "s";
-            scheduleCourseOutput.setText((String)selectStudentSchedule.getSelectedItem() + " has been scheduled for " + (String)selectCourseComboBox.getSelectedItem());
+            scheduleCourseOutput.setText(studentNamesCB(selectStudentSchedule)[0] + " has been scheduled for " + (String)selectCourseComboBox.getSelectedItem());
         }
         else
         {
             status = "w";
-            scheduleCourseOutput.setText((String)selectStudentSchedule.getSelectedItem() + " has been waitlisted for " + (String)selectCourseComboBox.getSelectedItem());
+            scheduleCourseOutput.setText(studentNamesCB(selectStudentSchedule)[0] + " has been waitlisted for " + (String)selectCourseComboBox.getSelectedItem());
         }
-        ScheduleEntry newEntry = new ScheduleEntry(currentSemester, (String)selectCourseComboBox.getSelectedItem(), (String)selectStudentSchedule.getSelectedItem(), status, new java.sql.Timestamp(System.currentTimeMillis()));
+        ScheduleEntry newEntry = new ScheduleEntry(currentSemester, (String)selectCourseComboBox.getSelectedItem(), studentNamesCB(selectStudentSchedule)[1], status, new java.sql.Timestamp(System.currentTimeMillis()));
         ScheduleQueries.addScheduleEntry(newEntry);
     }//GEN-LAST:event_scheduleCoursesButtonActionPerformed
 
@@ -841,7 +831,7 @@ public class MainFrame extends javax.swing.JFrame {
     // STUDENT-DISPLAY_SCHEDULE TABLE
     private void displayScheduleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayScheduleButtonActionPerformed
         // TODO add your handling code here:
-        ArrayList<ScheduleEntry> schedule = ScheduleQueries.getScheduleByStudent(currentSemester, (String)selectStudentDisplay.getSelectedItem());
+        ArrayList<ScheduleEntry> schedule = ScheduleQueries.getScheduleByStudent(currentSemester, ((String)selectStudentDisplay.getSelectedItem()).split(" ")[2]);
         DefaultTableModel currTableMod = (DefaultTableModel)displayScheduleTable.getModel();
         currTableMod.setNumRows(0);
         Object[] rowData = new Object[3];
@@ -885,12 +875,77 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void dropStudentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dropStudentButtonActionPerformed
         // TODO add your handling code here:
+        
+        // handle deleting of student & from schedule
+        dropStudentTextArea.setText("");
+        StudentEntry currStudent = StudentQueries.getStudent(studentNamesCB(dropStudentComboBox)[1]);
+        dropStudentTextArea.append((String)dropStudentComboBox.getSelectedItem() + " has been dropped from the list of stuents.\n\n");
+
+        for (String thisSem : SemesterQueries.getSemesterList())
+        {
+            
+            //ArrayList<ScheduleEntry> studentSchedule = ScheduleQueries.getScheduleByStudent(thisSem, currStudent.getStudentID());
+            String droppedCourses = "";
+            String scheduledCourses = "";
+            for (ScheduleEntry currentEntry : ScheduleQueries.getScheduleByStudent(thisSem, currStudent.getStudentID()))
+            {
+                ScheduleQueries.dropStudentScheduleByCourse(thisSem, currStudent.getStudentID(), currentEntry.getCourseCode());
+                droppedCourses += ((String)dropStudentComboBox.getSelectedItem() + (currentEntry.getStatus().equals("w") ? " has been dropped from the waitlist for ": " has been dropped from ") + currentEntry.getCourseCode() + "\n");
+                
+                ArrayList<ScheduleEntry> waitlistedStudents = ScheduleQueries.getWaitlistedStudentsByCourse(thisSem, currentEntry.getCourseCode());
+                if (waitlistedStudents.size() > 0)
+                {
+                    ScheduleQueries.updateScheduleEntry(thisSem, waitlistedStudents.get(0));
+                    StudentEntry movedStudent = StudentQueries.getStudent(waitlistedStudents.get(0).getStudentID());
+                    scheduledCourses += movedStudent.getLastName() + ", " + movedStudent.getLastName() + " " + waitlistedStudents.get(0).getStudentID() + " has been scheduled into " + waitlistedStudents.get(0).getCourseCode() + "\n";
+                }
+            }
+            if (!droppedCourses.isEmpty() || !scheduledCourses.isEmpty())
+            {
+                dropStudentTextArea.append("For Semester: " + thisSem + "\n");
+                dropStudentTextArea.append(droppedCourses);
+                dropStudentTextArea.append(scheduledCourses);
+            }
+        }
+
+        StudentQueries.dropStudent(studentNamesCB(dropStudentComboBox)[1]);
+        rebuildStudentComboBoxes();
+
     }//GEN-LAST:event_dropStudentButtonActionPerformed
 
     private void dropCourseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dropCourseButtonActionPerformed
         // TODO add your handling code here:
+        dropCourseTextArea.setText("");
+        String scheduledStudents = "Scheduled students dropped from the course:\n";
+        String waitlistedStudents = "Waitlisted students dropped from the course:\n";
+        StudentEntry currStudent;
+        for (ScheduleEntry currentEntry : ScheduleQueries.getScheduledStudentsByCourse(currentSemester, (String)dropCoursesComboBox.getSelectedItem()))
+        {
+            currStudent = StudentQueries.getStudent(currentEntry.getStudentID());
+            scheduledStudents += currStudent.getLastName() + ", " + currStudent.getFirstName() + " " + currStudent.getStudentID() + "\n"; 
+        }
+        for (ScheduleEntry currentEntry : ScheduleQueries.getWaitlistedStudentsByCourse(currentSemester, (String)dropCoursesComboBox.getSelectedItem()))
+        {
+            currStudent = StudentQueries.getStudent(currentEntry.getStudentID());
+            scheduledStudents += currStudent.getLastName() + ", " + currStudent.getFirstName() + " " + currStudent.getStudentID() + "\n"; 
+        }
+
+        ScheduleQueries.dropScheduleByCourse(currentSemester, (String)dropCoursesComboBox.getSelectedItem());
+        CourseQueries.dropCourse(currentSemester, (String)dropCoursesComboBox.getSelectedItem());
+        dropCourseTextArea.append(scheduledStudents + "\n");
+        dropCourseTextArea.append(waitlistedStudents);
+
+        rebuildCourseComboBoxes();
     }//GEN-LAST:event_dropCourseButtonActionPerformed
 
+    private String[] studentNamesCB(javax.swing.JComboBox<String> input)
+    {
+        String[] val = ((String)input.getSelectedItem()).split(" ");
+        String[] retVal = new String[2];
+        retVal[0] = val[0] + " " + val[1];
+        retVal[1] = val[2];
+        return retVal;
+    }
     /**
      * @param args the command line arguments
      */

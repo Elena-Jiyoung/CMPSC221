@@ -51,6 +51,11 @@ public class ScheduleQueries {
             
             while(resultSet.next())
             {
+                String getSem = resultSet.getString(1);
+                String getCoursecode = resultSet.getString(2);
+                String getID = resultSet.getString(3);
+                String getStatus = resultSet.getString(4);
+                //sql.Timestamp getSem = resultSet.getTimestamp(5);
                 faculty.add(new ScheduleEntry(resultSet.getString(1), resultSet.getString(2), resultSet.getString(3), resultSet.getString(4), resultSet.getTimestamp(5)));
             }
 
@@ -142,11 +147,12 @@ public class ScheduleQueries {
         connection = DBConnection.getConnection();
         try
         {
-            getScheduleByStudent = connection.prepareStatement("delete from app.course where semester = ? and coursecode = ? and studentid = ?");
+            getScheduleByStudent = connection.prepareStatement("DELETE FROM APP.SCHEDULE WHERE SEMESTER = ? AND STUDENTID = ? AND COURSECODE = ?");
+            
             getScheduleByStudent.setString(1, semester);
-            getScheduleByStudent.setString(2, courseCode);
-            getScheduleByStudent.setString(3, studentID);
-            resultSet = getScheduleByStudent.executeQuery();
+            getScheduleByStudent.setString(2, studentID);
+            getScheduleByStudent.setString(3, courseCode);
+            getScheduleByStudent.executeUpdate();
         }
         catch(SQLException sqlException)
         {
@@ -159,10 +165,27 @@ public class ScheduleQueries {
         connection = DBConnection.getConnection();
         try
         {
-            getScheduleByStudent = connection.prepareStatement("delete from app.course where semester = ? and coursecode = ?");
+            getScheduleByStudent = connection.prepareStatement("delete from app.schedule where semester = ? and coursecode = ?");
             getScheduleByStudent.setString(1, semester);
             getScheduleByStudent.setString(2, courseCode);
-            resultSet = getScheduleByStudent.executeQuery();
+            getScheduleByStudent.executeUpdate();
+        }
+        catch(SQLException sqlException)
+        {
+            sqlException.printStackTrace();
+        }
+    }
+
+    public static void updateScheduleEntry(String semester, ScheduleEntry entry)
+    {
+        connection = DBConnection.getConnection();
+        try
+        {
+            getScheduleByStudent = connection.prepareStatement("update app.schedule set status = 's' where semester = ? and studentid = ? and coursecode = ?");
+            getScheduleByStudent.setString(1, semester);
+            getScheduleByStudent.setString(2, entry.getStudentID());
+            getScheduleByStudent.setString(3, entry.getCourseCode());
+            getScheduleByStudent.executeUpdate();
         }
         catch(SQLException sqlException)
         {
