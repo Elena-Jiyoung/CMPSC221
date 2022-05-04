@@ -31,4 +31,12 @@ public class StudentEntry {
     {
         return this.lastName;
     }
+    public String lastFirstName()
+    {
+        return this.lastName + ", " + this.firstName;
+    }
+    public String fullID()
+    {
+        return lastFirstName() + " " + this.studentID;
+    }
 }
